@@ -6,12 +6,12 @@ sahil gupta
 - both produce well-documented, beautiful ASTs
 - both have optional 'loose mode' where tolerates errors
 - acorn pros
- - by esprima's own benchmarks, acorn is trivially faster (./p-speed.png)
+ - by esprima's own [benchmarks](http://esprima.org/test/compare.html), acorn is mildly faster (_./p-speed.png_)
  - 30kb smaller
 - esprima pros
  - compatible with modern firefox, chrome, ie8+
  - acorn incompatible with ie8 in js strict mode
-   - determined with http://jscc.info (./p-acorn.png)
+   - determined with [jscc.info](http://jscc.info) (_./p-acorn.png_)
 
 ### specs
 - whitelist
@@ -21,5 +21,5 @@ sahil gupta
 - structure
  - empty, one, nest
 - extra
- - code editor
+ - code editor (ace, codemirror)
  - nonblocking
