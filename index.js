@@ -1,50 +1,84 @@
 // sahil gupta
 
 /*
-function, return, var, while, for, break, if, else
 white/black in one pass
+future
+    allow input for frequency of statements
 */
 
-// input esprima tree, type of api, api arguments
-var testAPI = function(codeTree, type, args) {
-    if (type === 'whitelist') {
-        return args + '3333333';
-    } else if (type === 'blacklist') {
-        return args + '4444444';
-    } else if (type === 'structure') {
-        return args + '5555555';
-    }
-    return 'heree';
+// abbreviation hash table
+var dict = {
+    'function'  : 'FunctionExpression',   // note also 'FunctionDeclaration'
+    'return'    : 'ReturnStatement',
+    'var'       : 'VariableDeclaration',
+    'if'        : 'IfStatement',
+    'while'     : 'WhileStatement',
+    'for'       : 'ForStatement',
+    'break'     : 'BreakStatement'
+}
+
+// methods and arguments
+var methods = {
+    whitelist: {'for': 1, 'var': 1},
+    blacklist: {'while': 0},
+    structure: {'for': 'if'}
+};
+
+// input node of tree to traverse, apply function, recurse
+var treeTraverse = function(node, f) {
+    f(node);
+    // hereee recurse
+
+};
+
+
+// input syntax tree
+// return array of feedback
+var testAPI = function(node) {
+    // if worth traversing tree
+    if ($.isEmptyObject(methods.whitelist) &&
+        $.isEmptyObject(methods.blacklist) &&
+        $.isEmptyObject(methods.structure))
+        return ['looks good'];
+    
+    // function checks node against each whitelist/blacklist keyword
+    var checkNode = function(node) {
+        for (key in methods.whitelist) {
+            if (dict[key] === node.type)
+                methods.whitelist[key]--;       // keyword seen
+        }
+
+        for (key in methods.blacklist) {
+            if (dict[key] === node.type)
+                methods.blacklist[key]++;       // keyword seen
+        }
+    };
+
+    treeTraverse(node, checkNode);
+
+    return ['heree'];
 };
 
 
 // document ready
 $(function() {
+    // initial textarea value
     var temp = 'var x = 2 * 3;';
-    $('#code-text').val(temp);
+    $('#text').val(temp);
 
-    var apis = {
-        whitelist: 'for, var',
-        blacklist: 'while',
-        structure: {'for': 'if'}
-    };
-
-    $('#code-text').bind('change keyup', function(e) {
-        var code = (e.keyCode || e.which);          // ignore arrow keys
+    // run tests when textarea changes
+    $('#text').bind('change keyup', function(e) {
+        var code = (e.keyCode || e.which);              // ignore arrow keys
         if(code >= 37 && code <= 40)
             return;
 
-        var codeText = $('#code-text').val(),       // get textarea code
-            codeTree = esprima.parse(codeText);
+        var text = $('#text').val(),               // get textarea code
+            tree = esprima.parse(text);
 
-        $('#code-tree').val(JSON.stringify(codeTree, null, 4)); // show tree
+        $('#tree').val(JSON.stringify(tree, null, 4));  // show tree
 
-        var message = '';
-        for (type in apis)
-            message += testAPI(codeTree, type, apis[type]) + '\n';
-
-        console.log(message);
-
+        var feedback = testAPI(tree);
+        console.log(feedback);
     });
 
 });
