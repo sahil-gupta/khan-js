@@ -4,7 +4,12 @@
 white/black in one pass
 future
     allow input for frequency of statements
+    check whitelist and blacklist mutually exclusive
 */
+
+
+
+
 
 // abbreviation hash table
 var dict = {
@@ -29,6 +34,7 @@ var arrowKey = function(e) {
 
 
 // input key event, list type as string
+// goes through input labels and updates methods{}
 var updateList = function(e, list) {
     if (arrowKey(e)) return;
 
@@ -100,7 +106,7 @@ var testAPI = function(node) {
 
     treeTraverse(node, checkNode);              // traverse tree w checkNode()
 
-    // loop through lists, make sure keys have correct frequency
+    // loop through lists, check that keys have correct frequency
     var feedbackW = [], feedbackB = [], key;
     for (key in methods.whitelist) {
         if (methods.whitelist[key] > 0)         // if not enough were seen
@@ -130,24 +136,15 @@ $(function() {
     });
 
 
-
     // run tests when textarea changes
-    $('#text').bind('change keyup', function(e) {
+    editor.getSession().on('change', function(e) {
         arrowKey(e);
 
-            //structure: {'for': 'if'}
+        updateList(e, 'whitelist');
+        updateList(e, 'blacklist');
+            //structure: {'for': 'if'} heree        
 
-        // check whitelist and blacklist mutually exclusive
-        var keyW, keyB;
-        for (keyW in methods.whitelist) {
-            for (keyB in methods.blacklist) {
-                if (keyW === keyB)
-                    return $('#feedback').val('whitelist overlaps blacklist');
-            }
-        }
-        // assert whitelist and blacklist mutex
-
-        var text = $('#text').val(),                // get textarea code
+        var text = editor.getValue();       // get ace editor code
             tree = esprima.parse(text);
 
         // show feedback
