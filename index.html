@@ -2,59 +2,72 @@
 
 <!DOCTYPE html>
 <html lang='en'>
+
 <head>
-  <title>ka | challenge</title>
 
-  <meta charset='utf-8'/>
-  <meta name='viewport' content='width=device-width, initial-scale=1.0'/>
-  <meta name="description" content="khan academy challenge framework">
 
-  <!-- jquery -->
-  <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js'></script>
-  <!-- esprima -->
-  <script src='http://rawgit.com/jquery/esprima/master/esprima.js'></script>
-  <!-- local code -->
-  <script src='./index.js'></script>
 
-  <style type="text/css" media="screen">
-      body {
-          overflow: hidden;
-      }
-      #editor {
-          margin: 0;
-          position: absolute;
-          top: 0;
-          bottom: 0px;
-          left: 20%;
-          right: 0;
-      }
-    </style>
+<!-- jquery -->
+<script src='http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js'></script>
+<!-- esprima -->
+<script src='http://rawgit.com/jquery/esprima/master/esprima.js'></script>
+<!-- local code -->
+<script src='./index.js'></script>
+
+<style type="text/css" media="screen">
+  body, body input {
+    overflow: hidden;
+    font-family: 'Calibri';
+  }
+
+  #user {
+    margin: 10px;
+    line-height: 1.4;
+    position: absolute;
+    width: 300px;
+    top: 0;
+    left: 0;
+  }
+
+  #editor {
+    margin: 0;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 320px;
+    right: 0;
+  }
+</style>
+
 </head>
 
 <body>
 
-  <pre id="editor">function foo(items) {
-      var i;
-      for (i = 0; i &lt; items.length; i++) {
-          alert("Ace Rocks " + items[i]);
-      }
-  }</pre>
-
-
+<div id='user'>
+  <p>Welcome to the KA challenge framework. Enter whitelist and blacklist keywords as comma- or space-separated values, and keyword structure as JSON. Merry coding ~</p>
+  <p>_______</p>
   whitelist <input type='text' id='inputW' value='for, var'><br>
   <p id='feedbackW'>-</p>
   blacklist <input type='text' id='inputB' value='while'><br>
   <p id='feedbackB'>-</p>
+</div>
 
-  <!-- ace editor -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js" type="text/javascript" charset="utf-8"></script>
-  <script>
-      var editor = ace.edit("editor");
-      editor.setTheme("ace/theme/monokai");
-      editor.getSession().setMode("ace/mode/javascript");
-      document.getElementById('editor').style.fontSize='14px';
-      editor.setShowPrintMargin(false);
-  </script>
+<pre id='editor'>function foo(list) {
+    for (var i = 0; i &lt; list.length; i++) {
+        alert('khan academy ftw' + list[i]);
+    }
+}</pre>
+
+
+<!-- ace editor -->
+<script src='https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js'></script>
+<script>
+  var editor = ace.edit('editor');
+  editor.setTheme('ace/theme/monokai');
+  editor.getSession().setMode('ace/mode/javascript');
+  editor.setShowPrintMargin(false);
+  $('#editor')[0].style.fontSize = '14px';
+</script>
 
 
 </body>

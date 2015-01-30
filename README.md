@@ -13,6 +13,16 @@ sahil gupta
  - acorn incompatible with ie8 in js strict mode
    - determined with [jscc.info](http://jscc.info) (_./p-acorn.png_)
 
+### current implementation
+- provides feedback as user types
+- checks for white/blacklisted keywords in one pass
+- can check for >1 frequency of whitelist keywords
+
+### future implementation
+- make API more modular
+- keep a persistent keyword list, to not update on every user input
+- check that white/blacklist are mutually exclusive
+
 ### specs
 - whitelist
   - empty, one, many
@@ -21,5 +31,5 @@ sahil gupta
 - structure
  - empty, one, nest
 - extra
- - code editor (ace, codemirror)
  - nonblocking
+ - code editor
