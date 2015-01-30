@@ -3,7 +3,8 @@
 
 // abbreviation hash table
 var dict = {
-    'function'  : 'FunctionExpression',   // note 'FunctionDeclaration'
+    'funcExp'   : 'FunctionExpression',
+    'funcDec'   : 'FunctionDeclaration',
     'return'    : 'ReturnStatement',
     'var'       : 'VariableDeclaration',
     'if'        : 'IfStatement',
@@ -27,44 +28,55 @@ var arrowKey = function(e) {
 // goes through input labels and updates methods{}
 var updateList = function(e, list) {
     var input;
-    if (list === 'whitelist') {
-        input = $('#inputW');
-        methods.whitelist = {};
-    } else if (list === 'blacklist') {
-        input = $('#inputB');
-        methods.blacklist = {};
-    }
-
-    input = input.val().split(/[\s,]+/);        // split and trim
-    if (input.length === 1 && input[0] === '')  // edge case
-        input = [];
-
-    input.forEach(function(key) {           // update methods{}
+    if (list === 'structure') {
+        input = $('#inputS').val();
+        methods.structure = JSON.parse(input);  // convert to JSON
+    } else {
         if (list === 'whitelist') {
-            if (methods.whitelist[key])
-                methods.whitelist[key]++;   // key should have freq++
-            else
-                methods.whitelist[key] = 1;
+            input = $('#inputW');
+            methods.whitelist = {};
         } else if (list === 'blacklist') {
-            methods.blacklist[key] = 0;     // key should have freq 0
+            input = $('#inputB');
+            methods.blacklist = {};
         }
-    });
+
+        input = input.val().split(/[\s,]+/);    // split and trim
+        input.forEach(function(key) {           // update methods{}
+            if (list === 'whitelist') {
+                if (methods.whitelist[key])
+                    methods.whitelist[key]++;   // key should have freq++
+                else if (dict[key])             // if a keyword
+                    methods.whitelist[key] = 1;
+            } else if (list === 'blacklist') {
+                methods.blacklist[key] = 0;     // key should have freq 0
+            }
+        });
+    }
 }
 
 
-// input root node of tree to traverse, apply function f, recurse
+// input root node of tree to traverse, function f to apply, child to search
 // modifies methods{}
-var treeTraverse = function(node, f) {
+// returns 1 if child found
+var treeTraverse = function(node, f, childKey) {
     f(node);
+    if (node && dict[childKey] === node.type)       // child match
+        methods.structure = 1;
+
+    var parentKey = Object.keys(methods.structure)[0];
+    if (node && dict[parentKey] === node.type)      // parent match
+        childKey = methods.structure[parentKey];    // begin search for child
 
     // for each child node or array of nodes, recurse
     var key, child;
     for (key in node) {
         if (node.hasOwnProperty(key) && (child = node[key]) instanceof Object){
             if (child instanceof Array)     // if array
-                child.forEach(function(node) { treeTraverse(node, f); });
+                child.forEach(function(node) {
+                    treeTraverse(node, f, childKey);
+                });
             else                            // else if single
-                treeTraverse(child, f);            
+                treeTraverse(child, f, childKey);
         }
     }
 };
@@ -73,12 +85,6 @@ var treeTraverse = function(node, f) {
 // input syntax tree
 // return array of feedback
 var testAPI = function(node) {
-    // if worth traversing tree
-    if ($.isEmptyObject(methods.whitelist) &&
-        $.isEmptyObject(methods.blacklist) &&
-        $.isEmptyObject(methods.structure))
-        return ['looks good'];
-    
     // checks node against each whitelist/blacklist keyword
     var checkNode = function(node) {
         var key;
@@ -93,10 +99,10 @@ var testAPI = function(node) {
         }
     };
 
-    treeTraverse(node, checkNode);                  // transfer control
+    treeTraverse(node, checkNode, '');              // transfer control
 
     // loop through lists, check that keys have correct frequency
-    var feedbackW = [], feedbackB = [], key;
+    var feedbackW = [], feedbackB = [], feedbackS, key;
     for (key in methods.whitelist) {
         if (methods.whitelist[key] > 0)             // if not enough were seen
             feedbackW.push(key);
@@ -110,8 +116,10 @@ var testAPI = function(node) {
                                          'need - ' + feedbackW.join(' | ');
     feedbackB = feedbackB.length === 0 ? 'looks good' :
                                          'avoid - ' + feedbackB.join(' | ');
+    feedbackS = methods.structure === 1 ? 'looks good' : 'take another look';
     return { w: feedbackW,
-             b: feedbackB };
+             b: feedbackB,
+             s: feedbackS };
 };
 
 
@@ -124,21 +132,23 @@ var runTests = function(e) {
 
     updateList(e, 'whitelist');
     updateList(e, 'blacklist');
-        //structure: {'for': 'if'} heree        
+    updateList(e, 'structure');
 
     var text = editor.getValue(),           // get ace editor code
         tree,
         feedback;
     
-    try {                                   // make sure error non-blocking
+    try {                                   // make sure error doesn't block
         tree = esprima.parse(text);
         feedback = testAPI(tree);           // call to API
         $('#feedbackW').text(feedback.w);
         $('#feedbackB').text(feedback.b);
+        $('#feedbackS').text(feedback.s);
     } catch(e) {
         console.log(e);
         $('#feedbackW').text('-');          // indeterminate
         $('#feedbackB').text('-');
+        $('#feedbackS').text('-');
     }
 };
 
@@ -146,7 +156,7 @@ var runTests = function(e) {
 // document ready
 $(function() {
     // run tests when keywords change
-    $('#inputW, #inputB').bind('change keyup', function(e) {
+    $('#inputW, #inputB, #inputS').bind('change keyup', function(e) {
         runTests(e);
     });
     

@@ -5,13 +5,11 @@
 
 <head>
 
-
-
 <!-- jquery -->
 <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js'></script>
 <!-- esprima -->
 <script src='http://rawgit.com/jquery/esprima/master/esprima.js'></script>
-<!-- local code -->
+<!-- local script -->
 <script src='./index.js'></script>
 
 <style type="text/css" media="screen">
@@ -41,20 +39,26 @@
 
 </head>
 
+
 <body>
 
 <div id='user'>
-  <p>Welcome to the KA challenge framework. Enter whitelist and blacklist keywords as comma- or space-separated values, and keyword structure as JSON. Merry coding ~</p>
+  <p>Sahil Gupta</p>
+  <p>_______</p>
+  <p>Welcome to the KA challenge framework. Keywords include: <code>funcExp, fundDec, return, var, if, while, for, break</code>. Enter whitelist and blacklist keywords as comma- or space-separated values, and keyword structure as JSON. Merry coding ~</p>
   <p>_______</p>
   whitelist <input type='text' id='inputW' value='for, var'><br>
-  <p id='feedbackW'>-</p>
+  <pre id='feedbackW'>-</pre>
   blacklist <input type='text' id='inputB' value='while'><br>
-  <p id='feedbackB'>-</p>
+  <pre id='feedbackB'>-</pre>
+  structure <input type='text' id='inputS' value='{"for": "if"}'><br>
+  <pre id='feedbackS'>-</pre>
 </div>
+
 
 <pre id='editor'>function foo(list) {
     for (var i = 0; i &lt; list.length; i++) {
-        alert('khan academy ftw' + list[i]);
+        alert('khan academy ftw ' + list[i]);
     }
 }</pre>
 
@@ -68,7 +72,6 @@
   editor.setShowPrintMargin(false);
   $('#editor')[0].style.fontSize = '14px';
 </script>
-
 
 </body>
 

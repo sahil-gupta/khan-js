@@ -14,16 +14,18 @@ sahil gupta
    - determined with [jscc.info](http://jscc.info) (_./p-acorn.png_)
 
 ### current implementation
-- provides feedback as user types
-- checks for white/blacklisted keywords in one pass
+- provides feedback on 3 tests concurrently as user types
 - can check for >1 frequency of whitelist keywords
+- checks for white/blacklisted keywords in one pass through parse tree
 
 ### future implementation
-- make API more modular
 - keep a persistent keyword list, to not update on every user input
+- nonblocking javascript (perhaps with setTimeout())
 - check that white/blacklist are mutually exclusive
+- test-driven development
+- make API more modular
 
-### specs
+### notes
 - whitelist
   - empty, one, many
 - blacklist
